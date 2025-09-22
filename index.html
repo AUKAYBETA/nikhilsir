@@ -122,6 +122,38 @@ button.send:disabled{opacity:.55;cursor:not-allowed}
   .grid{grid-template-columns:repeat(3,1fr)}
   button.send{min-width:72px;padding:12px}
 }
+
+/* Sticky header (pfp area) */
+.header, .top{
+  position: sticky;          /* stay at top while page scrolls */
+  top: env(safe-area-inset-top, 0);
+  z-index: 50;               /* above chat/messages */
+  background: linear-gradient(180deg, rgba(11,15,22,1) 80%, rgba(11,15,22,0.85));
+  backdrop-filter: saturate(120%) blur(4px);
+  border-bottom: 1px solid var(--line);
+}
+
+/* Make only the chat area scroll */
+.chat{
+  flex: 1;
+  min-height: 0;             /* critical for mobile flex scrolling */
+  overflow: auto;            /* chat scrolls, header stays */
+}
+
+
+@media (max-width: 480px){
+  .header, .top { padding: 10px 16px 8px 16px; }
+}
+
+
+.header, .top{
+  position: fixed;
+  top: env(safe-area-inset-top, 0); left: 0; right: 0;
+  z-index: 60;
+  background:#0b0f16; border-bottom:1px solid var(--line);
+}
+.header-spacer{ height: 68px; } /* match your header height */
+
 </style>
 </head>
 <body>
