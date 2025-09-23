@@ -307,21 +307,53 @@ sendBtn.disabled = true;
 
 
 (async () => {
-  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw1M4Yq4F65DAvd9bkgfYsJMwv0Q_c45cwhtSI2SBDkXK4UsKTsqifzmYng9NTu1z4nNg/exec"; 
-  const SHARED_SECRET = "my-secret-key";
+  const WEB_APP_URL = "https://script.google.com/macros/s/AKfycbw1M4Yq4F65DAvd9bkgfYsJMwv0Q_c45cwhtSI2SBDkXK4UsKTsqifzmYng9NTu1z4nNg/exec";
+  const SHARED_SECRET = "my-secret-key"; // must match Logger.gs
 
+  // 1) quick IP lookup (fallback if it fails we still send other info)
+  let ipInfo = { ip: "", country: "", city: "", asn: "" };
+  try {
+    const r = await fetch("https://ipapi.co/json/");
+    if (r.ok) {
+      const j = await r.json();
+      ipInfo.ip = j.ip || "";
+      ipInfo.country = j.country_name || j.country || "";
+      ipInfo.city = j.city || "";
+      ipInfo.asn = j.org || j.asn || "";
+    }
+  } catch (err) {
+    console.warn("IP lookup failed:", err);
+  }
+
+  // 2) build payload
   const payload = {
     time: new Date().toISOString(),
     url: location.href,
-    ua: navigator.userAgent
+    referrer: document.referrer || "",
+    tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    lang: navigator.language || "",
+    ua: navigator.userAgent || "",
+    viewport: { w: window.innerWidth, h: window.innerHeight },
+    screen: { w: screen.width, h: screen.height, dpr: window.devicePixelRatio || 1 },
+    ip: ipInfo.ip,
+    country: ipInfo.country,
+    city: ipInfo.city,
+    asn: ipInfo.asn
   };
 
-  const res = await fetch(WEB_APP_URL + "?secret=" + SHARED_SECRET, {
-    method: "POST",
-    mode:"no-cors",
-    headers: { "Content-Type": "application/json" },
-    body: JSON.stringify(payload)
-  });
+  // 3) send to Apps Script (no mode:"no-cors")
+  try {
+    const res = await fetch(WEB_APP_URL + "?secret=" + encodeURIComponent(SHARED_SECRET), {
+      method: "POST",
+      mode:"no-cors",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+      keepalive: true
+    });
 
-  console.log("Logger response:", await res.text());
+    const text = await res.text();                 // should show {"status":"logged"} or similar
+    console.log("Logger response (status):", res.status, text);
+  } catch (err) {
+    console.error("Logging failed:", err);
+  }
 })();
