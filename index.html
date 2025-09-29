@@ -1,295 +1,101 @@
-<!doctype html>
+<!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="utf-8"/>
-<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"/>
-<meta name="theme-color" content="#0b0f16"/>
-<title>Nikhil Sir — Chat (Aukayyy Bacha)</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;800&display=swap" rel="stylesheet">
-<style>
-  .chat {
-  position: relative;  /* 👈 important */
-  overflow-y: auto;
-}
+  <meta charset="UTF-8">
+  <title>Class X-B AI Bots</title>
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    html, body {
+      width: 100%;
+      min-height: 100vh;   /* page can grow */
+      background: #0a0f1c;
+      font-family: 'Poppins', sans-serif;
+      color: #fff;
+      overflow-x: hidden;
+      overflow-y: auto;    /* ✅ vertical scroll enabled */
+    }
 
-.share-note {
-  font-size: 12px;
-  color: var(--muted);
-  text-align: center;
-  padding: 6px 10px;
-}
+    /* ===== Header ===== */
+    .header {
+      text-align: center;
+      padding: 1.5rem 1rem;
+      background: linear-gradient(135deg, #6a11cb, #2575fc);
+    }
+    .header h1 {
+      font-size: 2rem;
+      margin-bottom: 0.8rem;
+    }
+    #searchBar {
+      padding: 0.8rem 1rem;
+      width: 90%;
+      max-width: 400px;
+      border: none;
+      border-radius: 10px;
+      font-size: 1rem;
+    }
+    .suggestion {
+      margin-top: 0.5rem;
+      font-size: 0.9rem;
+      color: #ccc;
+    }
 
-    .footer {
-  font-size: 12px;
-  color: var(--muted);
-  text-align: center;
-  padding: 8px;
-  background: rgba(11,15,22,0.9);
-  border-top: 1px solid var(--line);
-  position: sticky;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  z-index: 5;
-}
-.footer a {
-  color: var(--acc);
-  text-decoration: none;
-}
-.footer a:hover {
-  text-decoration: underline;
-}
+    /* ===== Bot Grid ===== */
+    .bot-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 2rem;
+      padding: 2rem 1rem;
+    }
 
-:root{
-  --bg:#0b0f16;--fg:#eaf1ff;--muted:#9fb0c4;--card:#0f1624;--line:#1b2332;--acc:#7aa2ff;
-  --me:#152036;--sir:#121b2a;--green:#22c55e;--warn:#ff8a8a;
-}
-*{box-sizing:border-box}
-html,body{height:100%;margin:0}
-body{
-  background:radial-gradient(1200px 700px at 80% -10%,#1a2233 0,#0b0f16 45%),var(--bg);
-  color:var(--fg);font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;
-}
-.app{
-  min-height:100dvh; /* mobile viewport correct height */
-  display:flex;flex-direction:column;
-  padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);
-}
-.wrap{max-width:920px;margin:0 auto;flex:1;display:flex;flex-direction:column;width:100%}
-.header{
-  display:flex;align-items:center;gap:12px;padding:12px 16px 8px 16px
-}
-.pfp{width:44px;height:44px;border-radius:50%;overflow:hidden;border:1px solid #0003;background:#0e1522;flex:0 0 auto}
-.pfp img{width:100%;height:100%;object-fit:cover}
-.h-txt{min-width:0}
-.title{display:flex;align-items:center;gap:8px}
-.name{font-weight:800;letter-spacing:.2px;white-space:nowrap}
-.badge{font-size:12px;color:#0cff8a;background:#043b2a;border:1px solid #09543a;padding:2px 8px;border-radius:999px}
-.badge.typing{background:#2b3952;border-color:#40506e;color:#a7c2ff}
-.sub{font-size:12px;color:var(--muted);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
-/* Popup overlay */
-.popup {
-  display: none; /* hidden by default */
-  position: fixed;
-  z-index: 999;
-  left: 0; top: 0;
-  width: 100%; height: 100%;
-  background: rgba(0,0,0,0.6);
-  backdrop-filter: blur(2px);
-  align-items: center;
-  justify-content: center;
-}
-
-/* Popup box */
-.popup-content {
-  background: var(--card);
-  color: var(--fg);
-  padding: 20px;
-  border-radius: 14px;
-  max-width: 320px;
-  text-align: center;
-  border: 1px solid var(--line);
-  box-shadow: 0 4px 12px rgba(0,0,0,0.4);
-  animation: popIn 0.25s ease-out;
-}
-.popup-content h3 { color: var(--acc); margin-top: 0; }
-.popup-content p { font-size: 14px; margin: 12px 0; }
-.popup-content button {
-  background: var(--acc);
-  color: #fff;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 8px;
-  font-weight: 600;
-  cursor: pointer;
-}
-
-/* Close (X) */
-.close {
-  position: absolute;
-  top: 10px; right: 14px;
-  font-size: 20px;
-  cursor: pointer;
-  color: var(--muted);
-}
-
-@keyframes popIn {
-  from { transform: scale(0.9); opacity: 0; }
-  to { transform: scale(1); opacity: 1; }
-}
-
-/* chat area */
-.chat{
-  flex:1;min-height:0; /* critical for mobile flex scrolling */
-  background:linear-gradient(180deg,rgba(255,255,255,.03),transparent),var(--card);
-  border-top:1px solid var(--line);border-bottom:1px solid var(--line);
-  padding:10px 10px 0;overflow:auto;
-}
-.msgs{display:flex;flex-direction:column;gap:10px;padding:0 6px 16px}
-
-/* bubbles */
-.msg{max-width:88%;padding:10px 12px;border:1px solid var(--line);border-radius:14px;position:relative}
-.msg.me{align-self:flex-end;background:var(--me)}
-.msg.sir{align-self:flex-start;background:var(--sir)}
-.msg > .text{white-space:pre-wrap;word-wrap:break-word;line-height:1.35}
-.msg .meta{display:flex;gap:6px;align-items:center;font-size:10px;color:var(--muted);margin-top:6px;opacity:.9}
-.tick{font-size:12px}
-
-/* typing chip */
-.typingchip{align-self:flex-start;background:var(--sir);display:inline-flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--line);border-radius:14px}
-.dots{display:inline-block;width:36px;height:10px;position:relative}
-.dots::before,.dots::after,.dots span{content:"";position:absolute;top:0;width:8px;height:8px;border-radius:50%;
-  background:#a6b8d0;opacity:.6;animation:bounce 1s infinite}
-.dots::before{left:0;animation-delay:0s}
-.dots span{left:14px;animation-delay:.2s}
-.dots::after{left:28px;animation-delay:.4s}
-@keyframes bounce{0%,80%,100%{transform:translateY(0)}40%{transform:translateY(-5px)}}
-.share-note {
-  font-size: 13px;
-  font-weight: 500;
-  text-align: center;
-  color: var(--fg);
-  background: linear-gradient(90deg, rgba(122,162,255,0.1), rgba(122,162,255,0.05));
-  border-top: 1px solid var(--line);
-  padding: 10px 14px;
-  margin-top: 6px;
-  border-radius: 0 0 12px 12px;
-  letter-spacing: 0.2px;
-}
-
-.share-note strong {
-  color: var(--acc);
-  font-weight: 700;
-}
-
-/* media */
-.photo{margin-top:6px;border-radius:12px;overflow:hidden;border:1px solid #0003;background:#0e1522}
-.photo img{display:block;max-width:100%;height:auto}
-.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px;margin-top:6px}
-.grid img{width:100%;height:120px;object-fit:cover;border-radius:10px;border:1px solid #0003;background:#0e1522}
-.video{margin-top:6px;border-radius:12px;overflow:hidden;border:1px solid #0003;background:#0e1522}
-.video iframe{width:100%;aspect-ratio:16/9;border:0;display:block}
-
-/* composer pinned to bottom, safe-area aware */
-.composer-wrap{
-  position:sticky;bottom:0;left:0;right:0;z-index:10;
-  padding:8px 16px calc(8px + env(safe-area-inset-bottom));
-  background:linear-gradient(180deg,rgba(11,15,22,0),rgba(11,15,22,.85) 35%, rgba(11,15,22,1) 65%);
-  backdrop-filter:saturate(120%) blur(6px);
-}
-.composer{
-  background:linear-gradient(180deg,rgba(255,255,255,.03),transparent),var(--card);
-  border:1px solid var(--line);border-radius:16px;padding:10px
-}
-.row{display:flex;gap:8px;align-items:flex-end}
-textarea{
-  flex:1;resize:none;min-height:44px;max-height:160px;overflow:auto;border:1px solid var(--line);
-  border-radius:12px;background:#0b101a;color:#fff;padding:10px 12px;line-height:1.35;font-size:15px
-}
-button.send{
-  border:0;background:var(--acc);color:#fff;font-weight:800;padding:12px 16px;border-radius:12px;cursor:pointer;flex:0 0 auto;
-  min-width:84px
-}
-button.send:disabled{opacity:.55;cursor:not-allowed}
-
-/* small screens */
-@media (max-width:480px){
-  .name{font-size:15px}
-  .badge{font-size:11px}
-  .msg{max-width:95%}
-  .grid{grid-template-columns:repeat(3,1fr)}
-  button.send{min-width:72px;padding:12px}
-}
-
-/* Sticky header (pfp area) */
-.header, .top{
-  position: sticky;          /* stay at top while page scrolls */
-  top: env(safe-area-inset-top, 0);
-  z-index: 50;               /* above chat/messages */
-  background: linear-gradient(180deg, rgba(11,15,22,1) 80%, rgba(11,15,22,0.85));
-  backdrop-filter: saturate(120%) blur(4px);
-  border-bottom: 1px solid var(--line);
-}
-
-/* Make only the chat area scroll */
-.chat{
-  flex: 1;
-  min-height: 0;             /* critical for mobile flex scrolling */
-  overflow: auto;            /* chat scrolls, header stays */
-}
-
-
-@media (max-width: 480px){
-  .header, .top { padding: 10px 16px 8px 16px; }
-}
-
-
-.header, .top{
-  position: fixed;
-  top: env(safe-area-inset-top, 0); left: 0; right: 0;
-  z-index: 60;
-  background:#0b0f16; border-bottom:1px solid var(--line);
-}
-.header-spacer{ height: 68px; } /* match your header height */
-
-</style>
+    /* ===== Bot Card ===== */
+    .bot-card {
+      width: 95%;
+      max-width: 600px;
+      margin: 0 auto;
+      background: rgba(255, 255, 255, 0.08);
+      border-radius: 16px;
+      padding: 2rem 1rem;
+      text-align: center;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    .bot-card:hover {
+      transform: translateY(-4px);
+      box-shadow: 0 0 18px rgba(0, 242, 254, 0.6);
+    }
+    .bot-card img {
+      width: 150px;
+      height: 150px;
+      border-radius: 50%;
+      margin-bottom: 1rem;
+      border: 3px solid #4facfe;
+      object-fit: cover;
+    }
+    .bot-card h3 {
+      font-size: 1.6rem;
+      margin-bottom: 0.5rem;
+    }
+    .bot-card p {
+      font-size: 1.1rem;
+      color: #bbb;
+    }
+  </style>
 </head>
-
 <body>
-    
-<div class="app">
-  <div class="wrap">
-    <!-- Header -->
-    <header class="header">
-      <div class="pfp"><img id="pfp" src="nikhil.png" alt="pfp"
-        onerror="this.src='https://dummyimage.com/200x200/0e1522/7aa2ff&text=nikhil.png+missing'"></div>
-        
-      <div class="h-txt">
-        <div class="title">
-          <div class="name">Nikhil Sir</div>
-          <span id="status" class="badge">Online</span>
-        </div>
-        <div class="sub">aukayyy bacha — knotbookss ready?</div>
-      </div>
-    </header>
+  <header class="header">
+    <h1>Class X-B AI Bots</h1>
+    <input id="searchBar" type="text" placeholder="Search for a bot...">
+    <div id="suggestion" class="suggestion"></div>
+  </header>
 
-    <!-- Chat -->
-    <main id="chat" class="chat">
-        <div class="share-note">
-  ✨ Don’t forget to share your best convo on Insta Story & tag <strong>@aukay25</strong> 😄
-</div>
-<div class="share-note">
-  ✨ Don’t forget to share your best convo on Insta Story & tag <strong>@aukay25</strong> 😄
-</div>
+  <!-- JS will inject cards here -->
+  <main class="bot-grid" id="botGrid"></main>
 
-      <div id="msgs" class="msgs"></div>
-      
-    </main>
-
-    <!-- Composer --><div class="footer">
-  By using this chat you agree to our 
-  <a href="privacy.html" target="_blank">Privacy Policy</a>.
-</div>
-
-    <div class="composer-wrap">
-      <div class="composer">
-        <div class="row">
-            
-          <textarea id="input" placeholder="Send a message !!"></textarea>
-          <button id="send" class="send" disabled>Send</button>
-        </div>
-      </div>
-    </div>
-  </div>
-</div>
-
-<script src="app.js">
-
-</script><!-- Share Reminder Popup -->
-<div id="sharePopup" class="popup">
-  <div class="popup-content">
-    <span id="closePopup" class="close">&times;</span>
-    <h3>✨ Reminder</
-
+  <script src="app.js"></script>
+  <script src="bots.js"></script>
 </body>
 </html>
