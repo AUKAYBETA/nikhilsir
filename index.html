@@ -5,85 +5,94 @@
   <title>Class X-B AI Bots</title>
   <link rel="stylesheet" href="styles.css">
   <style>
-    * {
-      margin: 0;
-      padding: 0;
-      box-sizing: border-box;
-    }
-    html, body {
-      width: 100%;
-      min-height: 100vh;   /* page can grow */
-      background: #0a0f1c;
-      font-family: 'Poppins', sans-serif;
-      color: #fff;
-      overflow-x: hidden;
-      overflow-y: auto;    /* ✅ vertical scroll enabled */
-    }
+    /* make full page scrollable */
+html, body {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+  overflow-y: auto;   /* ✅ vertical scroll enable */
+  overflow-x: hidden; /* ✅ avoid horizontal scroll */
+}
 
-    /* ===== Header ===== */
-    .header {
-      text-align: center;
-      padding: 1.5rem 1rem;
-      background: linear-gradient(135deg, #6a11cb, #2575fc);
+/* grid should not overflow */
+.bot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+}
+/* ===== Futuristic Scrollbar (Global) ===== */
+::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}    /* ✅ Responsive tweaks */
+    @media (max-width: 600px) {
+      .hero h1 { font-size: 1.8rem; }
+      .hero p { font-size: 0.9rem; }
+      .bot-card img { width: 60px; height: 60px; }
+      .bot-card h3 { font-size: 0.9rem; }
+      .bot-card p { font-size: 0.75rem; }
     }
-    .header h1 {
-      font-size: 2rem;
-      margin-bottom: 0.8rem;
-    }
-    #searchBar {
-      padding: 0.8rem 1rem;
-      width: 90%;
-      max-width: 400px;
-      border: none;
-      border-radius: 10px;
-      font-size: 1rem;
-    }
-    .suggestion {
-      margin-top: 0.5rem;
-      font-size: 0.9rem;
-      color: #ccc;
-    }
+::-webkit-scrollbar-track {
+  background: #0a0f1c; /* dark track */
+  border-radius: 10px;
+  box-shadow: inset 0 0 5px rgba(0,0,0,0.6);
+}
 
-    /* ===== Bot Grid ===== */
-    .bot-grid {
-      display: flex;
-      flex-direction: column;
-      gap: 2rem;
-      padding: 2rem 1rem;
-    }
+::-webkit-scrollbar-thumb {
+  background: linear-gradient(180deg, #00f2fe, #4facfe, #6a11cb);
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgba(0, 242, 254, 0.7), 0 0 20px rgba(106, 17, 203, 0.6);
+  transition: background 0.3s ease, box-shadow 0.3s ease;
+}
 
-    /* ===== Bot Card ===== */
-    .bot-card {
-      width: 95%;
-      max-width: 600px;
-      margin: 0 auto;
-      background: rgba(255, 255, 255, 0.08);
-      border-radius: 16px;
-      padding: 2rem 1rem;
-      text-align: center;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-    }
-    .bot-card:hover {
-      transform: translateY(-4px);
-      box-shadow: 0 0 18px rgba(0, 242, 254, 0.6);
-    }
-    .bot-card img {
-      width: 150px;
-      height: 150px;
-      border-radius: 50%;
-      margin-bottom: 1rem;
-      border: 3px solid #4facfe;
-      object-fit: cover;
-    }
-    .bot-card h3 {
-      font-size: 1.6rem;
-      margin-bottom: 0.5rem;
-    }
-    .bot-card p {
-      font-size: 1.1rem;
-      color: #bbb;
-    }
-  </style>
+::-webkit-scrollbar-thumb:hover {
+  background: linear-gradient(180deg, #6a11cb, #4facfe, #00f2fe);
+  box-shadow: 0 0 15px rgba(106, 17, 203, 0.9), 0 0 25px rgba(0, 242, 254, 0.9);
+}
+
+/* Firefox support */
+* {
+  scrollbar-width: thin;
+  scrollbar-color: #4facfe #0a0f1c;
+}
+/* ===== Desktop / Tablet ===== */
+.bot-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 1rem;
+  padding: 1rem;
+}
+
+/* ===== Mobile: Full width big cards ===== */
+@media (max-width: 768px) {
+  .bot-grid {
+    grid-template-columns: 1fr;   /* ✅ One card per row */
+  }
+
+  .bot-card {
+    width: 90%;                  /* ✅ Take most of the width */
+    margin: 0 auto;              /* ✅ Center align */
+    padding: 1.5rem;
+    border-radius: 15px;
+  }
+
+  .bot-card img {
+    width: 120px;                /* ✅ Bigger image */
+    height: 120px;
+    margin-bottom: 10px;
+  }
+
+  .bot-card h3 {
+    font-size: 1.4rem;           /* ✅ Bigger name text */
+  }
+
+  .bot-card p {
+    font-size: 1rem;             /* ✅ Bigger subject text */
+  }
+}
+
+  </STYLE>
 </head>
 <body>
   <header class="header">
@@ -92,10 +101,10 @@
     <div id="suggestion" class="suggestion"></div>
   </header>
 
-  <!-- JS will inject cards here -->
   <main class="bot-grid" id="botGrid"></main>
+<script src="app.js"></script>
 
-  <script src="app.js"></script>
   <script src="bots.js"></script>
+  
 </body>
 </html>
